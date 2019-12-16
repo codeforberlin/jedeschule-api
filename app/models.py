@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String, JSON
 
-from app.database import Base
+from .database import Base
 
 
 class School(Base):
