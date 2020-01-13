@@ -16,3 +16,9 @@ services:
       - db
     environment:
       - DATABASE_URL=postgresql://jedeschule:jedeschule@db:5432/jedeschule
+  scrapers:
+    image: jedeschule-scrapers
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql://jedeschule:jedeschule@db:5432/jedeschule
