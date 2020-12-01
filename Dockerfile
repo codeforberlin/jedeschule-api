@@ -9,5 +9,4 @@ RUN apt-get install postgresql-client --yes
 
 COPY ./app /app/app
 COPY ./prestart.sh /app/prestart.sh
-COPY ./test_connection.py /app
 
