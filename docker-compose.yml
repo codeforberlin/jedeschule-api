@@ -1,0 +1,24 @@
+version: '3'
+services:
+  db:
+    image: postgres:12.5
+    volumes:
+      - /tmp/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=jedeschule
+      - POSTGRES_PASSWORD=jedeschule
+      - POSTGRES_DB=jedeschule
+  web:
+    build: .
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql://jedeschule:jedeschule@db:5432/jedeschule
+  scrapers:
+    image: jedeschule-scrapers
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql://jedeschule:jedeschule@db:5432/jedeschule

@@ -7,6 +7,9 @@ class School(BaseModel):
     id: str
     name: str
     address: str
+    address2: Optional[str]
+    zip : Optional[str]
+    city : Optional[str]
     website: Optional[str]
     email: Optional[str]
     school_type: Optional[str]
@@ -14,6 +17,7 @@ class School(BaseModel):
     provider: Optional[str]
     fax: Optional[str]
     phone: Optional[str]
+    director: Optional[str]
     raw: dict
 
     class Config:
