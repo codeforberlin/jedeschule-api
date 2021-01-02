@@ -1,5 +1,8 @@
-name: Publish Docker Image
-on: [ push ]
+name: Deploy latest version
+on:
+  push:
+    branches:
+      - master
 jobs:
   build:
     runs-on: ubuntu-latest
