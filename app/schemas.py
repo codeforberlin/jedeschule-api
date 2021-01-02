@@ -23,3 +23,7 @@ class School(BaseModel):
     class Config:
         orm_mode = True
 
+
+class Statistic(BaseModel):
+    state: str
+    count: int

@@ -29,3 +29,10 @@ def read_school(school_id: str, db: Session = Depends(get_db)):
     if db_school is None:
         raise HTTPException(status_code=404, detail="School not found")
     return db_school
+
+
+@app.get("/stats", response_model=List[schemas.Statistic])
+def get_stats(db: Session = Depends(get_db)):
+    """Returns the total count of schools grouped by state.
+       States are represented using their ISO-3166-2:DE codes """
+    return crud.get_stats(db)
