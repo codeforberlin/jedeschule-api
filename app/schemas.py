@@ -1,8 +1,12 @@
+from __future__ import annotations
 
 from enum import Enum
 from typing import Optional
 
 from pydantic import BaseModel
+
+from app import models
+
 
 class State(Enum):
     BW = 'BW'
@@ -43,6 +47,9 @@ class School(BaseModel):
     class Config:
         orm_mode = True
 
+    @staticmethod
+    def from_db(db_entry: models.School) -> School:
+        return School.from_orm(db_entry)
 
 class Statistic(BaseModel):
     state: str
