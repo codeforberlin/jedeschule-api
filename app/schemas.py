@@ -27,3 +27,14 @@ class School(BaseModel):
 class Statistic(BaseModel):
     state: str
     count: int
+
+    class Config:
+        schema_extra = {
+            "example": [{
+                "name": "BE",
+                "count": 10,
+            },
+                {"name": "ND",
+                 "count": 12}
+            ]
+        }
