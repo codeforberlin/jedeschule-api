@@ -1,6 +1,26 @@
+
+from enum import Enum
 from typing import Optional
 
 from pydantic import BaseModel
+
+class State(Enum):
+    BW = 'BW'
+    BY = 'BY'
+    BE = 'BE'
+    BB = 'BB'
+    HB = 'HB'
+    HH = 'HH'
+    HE = 'HE'
+    MV = 'MV'
+    NI = 'NI'
+    NW = 'NW'
+    RP = 'RP'
+    SL = 'SL'
+    SN = 'SN'
+    ST = 'ST'
+    SH = 'SH'
+    TH = 'TH'
 
 
 class School(BaseModel):
@@ -8,17 +28,17 @@ class School(BaseModel):
     name: str
     address: str
     address2: Optional[str]
-    zip : Optional[str]
-    city : Optional[str]
-    website: Optional[str]
-    email: Optional[str]
-    school_type: Optional[str]
-    legal_status: Optional[str]
-    provider: Optional[str]
-    fax: Optional[str]
-    phone: Optional[str]
+    city: Optional[str]
     director: Optional[str]
-    raw: dict
+    email: Optional[str]
+    fax: Optional[str]
+    legal_status: Optional[str]
+    phone: Optional[str]
+    provider: Optional[str]
+    school_type: Optional[str]
+    website: Optional[str]
+    zip: Optional[str]
+    raw: Optional[dict]
 
     class Config:
         orm_mode = True

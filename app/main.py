@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from fastapi import Depends, FastAPI, HTTPException
 from sqlalchemy.orm import Session
@@ -8,6 +8,7 @@ from fastapi.middleware.gzip import GZipMiddleware
 
 from . import crud, schemas
 from .database import SessionLocal
+from .schemas import State
 
 app = FastAPI()
 
@@ -28,9 +29,15 @@ def get_db():
         db.close()
 
 
-@app.get("/schools/", response_model=List[schemas.School])
-def read_schools(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    schools = crud.get_schools(db, skip=skip, limit=limit)
+@app.get("/schools/", response_model=List[schemas.School] , response_model_exclude_none=True)
+def read_schools(skip: int = 0,
+                 limit: int = 100,
+                 state: Optional[State] = None,
+                 db: Session = Depends(get_db)):
+    filter_params = {}
+    if state:
+        filter_params['state'] = state
+    schools = crud.get_schools(db, skip=skip, limit=limit, filter_params=filter_params)
     return schools
 
 
