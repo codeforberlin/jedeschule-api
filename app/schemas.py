@@ -1,6 +1,30 @@
+from __future__ import annotations
+
+from enum import Enum
 from typing import Optional
 
 from pydantic import BaseModel
+
+from app import models
+
+
+class State(Enum):
+    BW = 'BW'
+    BY = 'BY'
+    BE = 'BE'
+    BB = 'BB'
+    HB = 'HB'
+    HH = 'HH'
+    HE = 'HE'
+    MV = 'MV'
+    NI = 'NI'
+    NW = 'NW'
+    RP = 'RP'
+    SL = 'SL'
+    SN = 'SN'
+    ST = 'ST'
+    SH = 'SH'
+    TH = 'TH'
 
 
 class School(BaseModel):
@@ -8,22 +32,36 @@ class School(BaseModel):
     name: str
     address: str
     address2: Optional[str]
-    zip : Optional[str]
-    city : Optional[str]
-    website: Optional[str]
-    email: Optional[str]
-    school_type: Optional[str]
-    legal_status: Optional[str]
-    provider: Optional[str]
-    fax: Optional[str]
-    phone: Optional[str]
+    city: Optional[str]
     director: Optional[str]
-    raw: dict
+    email: Optional[str]
+    fax: Optional[str]
+    legal_status: Optional[str]
+    phone: Optional[str]
+    provider: Optional[str]
+    school_type: Optional[str]
+    website: Optional[str]
+    zip: Optional[str]
+    raw: Optional[dict]
 
     class Config:
         orm_mode = True
 
+    @staticmethod
+    def from_db(db_entry: models.School) -> School:
+        return School.from_orm(db_entry)
 
 class Statistic(BaseModel):
     state: str
     count: int
+
+    class Config:
+        schema_extra = {
+            "example": [{
+                "name": "BE",
+                "count": 10,
+            },
+                {"name": "ND",
+                 "count": 12}
+            ]
+        }
