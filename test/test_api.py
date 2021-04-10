@@ -173,3 +173,27 @@ class TestStates:
                 },
             }
         ]
+
+    def test_schools_json_exposes_lat_and_lon(self, client, db):
+        # Arrange
+        school = SchoolFactory(
+            id=f"NW-100010",
+            location="SRID=4326;POINT(50.94217152830834 6.897017373118707)",
+            name="Gymnasium Claudia Agrippina Privat schule als priv.Ersatzsch. d. Sek.I u.II im Aufbau d. CAPS Privatschu gGmbH",
+            address="Stolberger Str. 112",
+        )
+
+        db.add(school)
+        db.commit()
+
+        # Act
+        response = client.get("/schools/NW-100010")
+
+        # Assert
+        assert response.json() == {
+            "id": "NW-100010",
+            "name": "Gymnasium Claudia Agrippina Privat schule als priv.Ersatzsch. d. Sek.I u.II im Aufbau d. CAPS Privatschu gGmbH",
+            "address": "Stolberger Str. 112",
+            "latitude": 50.94217152830834,
+            "longitude": 6.897017373118707,
+        }
