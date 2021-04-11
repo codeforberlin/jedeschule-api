@@ -61,9 +61,10 @@ class TestStats:
 
 class TestStates:
     def __setup_schools(self, db):
-        ni_schools = [SchoolFactory(id=f"NI-{i}") for i in range(10)]
+        ni_schools = [SchoolFactory(id=f"NI-{i}") for i in range(5)]
+        by_schools = [SchoolFactory(id=f"BY-{i}") for i in range(5)]
         other_schools = [get_full_school(), SchoolFactory(id="HE-1")]
-        for school in ni_schools + other_schools:
+        for school in ni_schools + by_schools + other_schools:
             db.add(school)
         db.commit()
 
@@ -88,6 +89,17 @@ class TestStates:
         # Assert
         assert response.status_code == 200
         assert len(response.json()) == 1
+
+    def test_filter_by_multiple_states(self, client, db):
+        # Arrange
+        self.__setup_schools(db)
+
+        # Act
+        response = client.get("/schools?state=HE&state=BY")
+
+        # Assert
+        assert response.status_code == 200
+        assert len(response.json()) == 6
 
     def test_filter_by_state_validates_state(self, client, db):
         # Arrange

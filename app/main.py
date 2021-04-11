@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Query
 from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
@@ -32,7 +32,7 @@ def get_db():
 @app.get("/schools/", response_model=List[schemas.School] , response_model_exclude_none=True)
 def read_schools(skip: int = 0,
                  limit: int = 100,
-                 state: Optional[State] = None,
+                 state: Optional[List[State]] = Query(None),
                  include_raw: bool = False,
                  db: Session = Depends(get_db)):
     filter_params = {}

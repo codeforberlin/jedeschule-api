@@ -1,5 +1,6 @@
 from geoalchemy2 import Geometry
-from sqlalchemy import Column, String, JSON
+from sqlalchemy import Column, String, JSON, func
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from .database import Base
 
@@ -22,4 +23,14 @@ class School(Base):
     director = Column(String)
     raw = Column(JSON)
     location = Column(Geometry('POINT'))
+
+    @hybrid_property
+    def state(self):
+        # Not used. The actual implementation is in the `state`
+        # method decorated with `state.expression` below
+        pass
+
+    @state.expression
+    def state(cls):
+        return func.substr(cls.id, 1, 2)
 
