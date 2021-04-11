@@ -1,13 +1,21 @@
+import random
+
 import factory
 
 from app.models import School
+from app.schemas import State
 
 
 class SchoolFactory(factory.Factory):
     class Meta:
         model = School
 
-    id = factory.Sequence(lambda n: n)
+    @staticmethod
+    def _get_state(n):
+        states = [state.name for state in State]
+        return states[n % len(states)]
+
+    id = factory.Sequence(lambda n: "{}-{}".format(SchoolFactory._get_state(n), n))
     name = factory.Sequence(lambda n: 'School %d' % n)
     address = factory.Faker('address')
 
