@@ -3,6 +3,7 @@ from typing import List
 from sqlalchemy.orm import Session
 
 from . import models
+from .filters import SchoolFilter
 from .schemas import School
 
 
@@ -16,12 +17,8 @@ def get_school(db: Session, school_id: str) -> School:
 
 def get_schools(db: Session, skip: int = 0, limit: int = 100, filter_params=None) -> List[School]:
     query = db.query(models.School)
-    if filter_params:
-        if 'state' in filter_params:
-            names = [state.name for state in filter_params['state']]
-            query = query.filter(models.School.state.in_(names))
-        if 'school_type' in filter_params:
-            query = query.filter(models.School.school_type.in_(filter_params['school_type']))
+    school_filter = SchoolFilter(filter_params)
+    query = school_filter.apply(query)
     return [School.from_db(school) for school in query.offset(skip).limit(limit).all()]
 
 

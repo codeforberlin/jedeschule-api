@@ -90,6 +90,36 @@ class TestStates:
         assert response.status_code == 200
         assert len(response.json()) == 1
 
+    def test_filter_by_school_type(self, client, db):
+        # Arrange
+        for school in [SchoolFactory(school_type="Gymnasium"),
+                       SchoolFactory(school_type="IGS"),
+                       SchoolFactory(school_type="Grundschule")]:
+            db.add(school)
+        db.commit()
+
+        # Act
+        response = client.get("/schools?school_type=Gymnasium&school_type=IGS")
+
+        # Assert
+        assert response.status_code == 200
+        assert len(response.json()) == 2
+
+    def test_filter_by_legal_status(self, client, db):
+        # Arrange
+        for school in [SchoolFactory(legal_status="Privat"),
+                       SchoolFactory(legal_status="Staatlich"),
+                       SchoolFactory(legal_status="Kirchlich")]:
+            db.add(school)
+        db.commit()
+
+        # Act
+        response = client.get("/schools?legal_status=Staatlich")
+
+        # Assert
+        assert response.status_code == 200
+        assert len(response.json()) == 1
+
     def test_filter_by_multiple_states(self, client, db):
         # Arrange
         self.__setup_schools(db)

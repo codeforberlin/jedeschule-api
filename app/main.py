@@ -34,13 +34,14 @@ def read_schools(skip: int = 0,
                  limit: int = 100,
                  state: Optional[List[State]] = Query(None),
                  school_type: Optional[List[str]] = Query(None),
+                 legal_status: Optional[List[str]] = Query(None),
                  include_raw: bool = False,
                  db: Session = Depends(get_db)):
-    filter_params = {}
-    if state:
-        filter_params['state'] = state
-    if school_type:
-        filter_params['school_type'] = school_type
+    filter_params = {
+        "state": state,
+        "school_type": school_type,
+        "legal_status": legal_status
+    }
     schools = crud.get_schools(db, skip=skip, limit=limit, filter_params=filter_params)
     if include_raw:
         return schools
