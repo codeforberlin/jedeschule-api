@@ -1,6 +1,7 @@
 from typing import List, Optional
 
 from fastapi import Depends, FastAPI, HTTPException, Query
+from fastapi.openapi.utils import get_openapi
 from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
@@ -70,3 +71,22 @@ def get_filter_params(db: Session = Depends(get_db)):
     """Returns distinct values for keys that can be used as
        filters.py in the `/schools/` endpoint"""
     return crud.get_params(db)
+
+
+def custom_openapi():
+    if app.openapi_schema:
+        return app.openapi_schema
+    openapi_schema = get_openapi(
+        title="jedeschule-api",
+        version="0.1.0",
+        description="This API allows you to query information about German schools.\n\n"
+                    "The schools are scraped as part of the [jedeschule.de](https://jedeschule.de) project."
+                    "You can find the source code for the [API](https://github.com/codeforberlin/jedeschule-api) and "
+                    "the [scrapers](https://github.com/datenschule/jedeschule-scraper) on Github. \n\n"
+                    "For more information about the available endpoints, check the documentation below.",
+        routes=app.routes,
+    )
+    app.openapi_schema = openapi_schema
+    return app.openapi_schema
+
+app.openapi = custom_openapi
