@@ -62,7 +62,7 @@ class School(BaseModel):
 
 
 class Statistic(BaseModel):
-    state: str
+    state: State
     count: int
 
     class Config:
