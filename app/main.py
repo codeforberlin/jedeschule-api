@@ -29,15 +29,18 @@ def get_db():
         db.close()
 
 
-@app.get("/schools/", response_model=List[schemas.School] , response_model_exclude_none=True)
+@app.get("/schools/", response_model=List[schemas.School], response_model_exclude_none=True)
 def read_schools(skip: int = 0,
                  limit: int = 100,
                  state: Optional[List[State]] = Query(None),
+                 school_type: Optional[List[str]] = Query(None),
                  include_raw: bool = False,
                  db: Session = Depends(get_db)):
     filter_params = {}
     if state:
         filter_params['state'] = state
+    if school_type:
+        filter_params['school_type'] = school_type
     schools = crud.get_schools(db, skip=skip, limit=limit, filter_params=filter_params)
     if include_raw:
         return schools

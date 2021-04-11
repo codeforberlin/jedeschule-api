@@ -20,6 +20,8 @@ def get_schools(db: Session, skip: int = 0, limit: int = 100, filter_params=None
         if 'state' in filter_params:
             names = [state.name for state in filter_params['state']]
             query = query.filter(models.School.state.in_(names))
+        if 'school_type' in filter_params:
+            query = query.filter(models.School.school_type.in_(filter_params['school_type']))
     return [School.from_db(school) for school in query.offset(skip).limit(limit).all()]
 
 
