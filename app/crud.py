@@ -28,3 +28,27 @@ from schools
 group by state
 order by state;""")
     return list(response)
+
+
+def _get_states(db: Session):
+    return [state for state, in db.execute("select distinct(substring(id, 1, 2)) from schools;")]
+
+
+def _get_school_types(db: Session):
+    return [school_type for school_type, in
+            db.execute("select distinct(school_type) from schools where school_type is not null;")
+            ]
+
+
+def _get_legal_status(db: Session):
+    return [school_type for school_type, in
+            db.execute("select distinct(legal_status) from schools where legal_status is not null;")
+            ]
+
+
+def get_params(db):
+    return {
+        "state": _get_states(db),
+        "school_type": _get_school_types(db),
+        "legal_status": _get_legal_status(db)
+    }

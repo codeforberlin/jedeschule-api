@@ -59,6 +59,29 @@ class TestStats:
         ]
 
 
+class TestFilterParams:
+    def test_basic(self, client, db):
+        # Arrange
+        for school in [SchoolFactory(id="BY-1", legal_status="Privat", school_type="Grundschule"),
+                       SchoolFactory(id="BY-2", legal_status="Privat", school_type="IGS"),
+                       SchoolFactory(id="NI-1", legal_status="Staatlich", school_type="Gesamtschule"),
+                       SchoolFactory(id="SN-3", legal_status="Staatlich", school_type="Grundschule"),
+                       ]:
+            db.add(school)
+        db.commit()
+
+        # Act
+        # Act
+        response = client.get("/filter_params")
+
+        # Assert
+        assert response.status_code == 200
+        assert response.json() == {'legal_status': ['Staatlich', 'Privat'],
+                                   'school_type': ['IGS', 'Grundschule', 'Gesamtschule'],
+                                   'state': ['SN', 'NI', 'BY']
+                                   }
+
+
 class TestStates:
     def __setup_schools(self, db):
         ni_schools = [SchoolFactory(id=f"NI-{i}") for i in range(5)]

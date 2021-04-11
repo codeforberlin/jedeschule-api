@@ -63,3 +63,10 @@ def get_stats(db: Session = Depends(get_db)):
     """Returns the total count of schools grouped by state.
        States are represented using their ISO-3166-2:DE codes """
     return crud.get_stats(db)
+
+
+@app.get("/filter_params", response_model=schemas.Params)
+def get_filter_params(db: Session = Depends(get_db)):
+    """Returns distinct values for keys that can be used as
+       filters.py in the `/schools/` endpoint"""
+    return crud.get_params(db)

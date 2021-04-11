@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Optional
+from typing import Optional, List
 
 from geoalchemy2.shape import to_shape
 from pydantic import BaseModel
@@ -75,3 +75,9 @@ class Statistic(BaseModel):
                  "count": 12}
             ]
         }
+
+
+class Params(BaseModel):
+    state: List[State]
+    school_type: List[str]
+    legal_status: List[str]
