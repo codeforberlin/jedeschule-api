@@ -6,7 +6,6 @@ from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 
-
 from . import crud, schemas
 from .database import SessionLocal
 from .schemas import State
@@ -36,13 +35,27 @@ def read_schools(skip: int = 0,
                  state: Optional[List[State]] = Query(None),
                  school_type: Optional[List[str]] = Query(None),
                  legal_status: Optional[List[str]] = Query(None),
+                 by_lat: Optional[float] = Query(None,
+                                                 description="Allows ordering result by distance from a geographical point."
+                                                             "Must be used in combination with `by_lon`"
+                                                             "Value must be in CRS EPSG:4326"
+                                                 ),
+                 by_lon: Optional[float] = Query(None,
+                                                 description="Allows ordering result by distance from a geographical point. "
+                                                             "Must be used in combination with `by_lat`"
+                                                             "Value must be in CRS EPSG:4326"
+                                                 ),
                  include_raw: bool = False,
                  db: Session = Depends(get_db)):
     filter_params = {
         "state": state,
         "school_type": school_type,
-        "legal_status": legal_status
+        "legal_status": legal_status,
     }
+    if by_lat or by_lon:
+        if not (by_lon and by_lat):
+            raise HTTPException(status_code=400, detail="To order by point, you need to provide by_lon and by_lat.")
+        filter_params["around"] = {"lat": by_lat, "lon": by_lon}
     schools = crud.get_schools(db, skip=skip, limit=limit, filter_params=filter_params)
     if include_raw:
         return schools
@@ -88,5 +101,6 @@ def custom_openapi():
     )
     app.openapi_schema = openapi_schema
     return app.openapi_schema
+
 
 app.openapi = custom_openapi

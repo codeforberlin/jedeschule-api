@@ -262,3 +262,36 @@ class TestStates:
             "latitude": 50.94217152830834,
             "longitude": 6.897017373118707,
         }
+
+    def test_schools_ordered_by_distance(self, client, db):
+        # Arrange
+        for school in [
+            SchoolFactory.create(location=None, id="BB-0"),
+            SchoolFactory.create(location='SRID=4326;POINT(52.00  13.00)', id="BB-1"),
+            SchoolFactory.create(location='SRID=4326;POINT(50.00  11.00)', id="BB-2"),
+            SchoolFactory.create(location='SRID=4326;POINT(50.00  10.00)', id="BB-3")
+        ]:
+            db.add(school)
+        db.commit()
+
+        # Act?by_lat=52.00&by_lon=9.99&limit=1"t
+        response = client.get("/schools?by_lat=52.00&by_lon=9.99&limit=1")
+
+        # Assert
+        assert response.status_code == 200
+        schools = response.json()
+        assert len(schools) == 1
+        assert schools[0]['id'] == "BB-3"
+
+    around_queries = [
+        ("?by_lat=52", 400),
+        ("?by_lon=10", 400),
+        ("?by_lon=10&by_lat=52", 200),
+    ]
+    @pytest.mark.parametrize("query_params,status_code", around_queries)
+    def test_timedistance_v0(self, client, db, query_params, status_code):
+        # Act
+        response = client.get(f"/schools{query_params}")
+
+        # Assert
+        assert response.status_code == status_code
