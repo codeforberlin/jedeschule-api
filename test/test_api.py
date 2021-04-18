@@ -315,16 +315,16 @@ class TestStates:
         # Arrange
         for school in [
             SchoolFactory.create(location=None),
-            SchoolFactory.create(location='SRID=4326;POINT(52.00  13.00)'),
-            SchoolFactory.create(location='SRID=4326;POINT(51.00  11.00)'),
-            SchoolFactory.create(location='SRID=4326;POINT(50.00  11.00)'),
-            SchoolFactory.create(location='SRID=4326;POINT(50.00  9.00)')
+            SchoolFactory.create(location='SRID=4326;POINT(13.00 52.00)'),
+            SchoolFactory.create(location='SRID=4326;POINT(11.00 51.00)'),
+            SchoolFactory.create(location='SRID=4326;POINT(11.00 50.00)'),
+            SchoolFactory.create(location='SRID=4326;POINT(09.00 50.00)')
         ]:
             db.add(school)
         db.commit()
 
         # Act
-        response = client.get("/schools?bb_top=12.00&bb_bottom=10&bb_left=49&bb_right=51")
+        response = client.get("/schools?bb_top=51.00&bb_bottom=49&bb_left=10&bb_right=12")
 
         # Assert
         assert response.status_code == 200

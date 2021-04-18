@@ -45,8 +45,8 @@ class BoundingBoxFilter(Filter):
         return query.filter(
             models.School.location.intersects(
                 func.ST_MakeEnvelope(
-                    self.values['left'], self.values['top'],
-                    self.values['right'], self.values['bottom']
+                    self.values['left'], self.values['bottom'],
+                    self.values['right'], self.values['top']
                 )
             )
         )
