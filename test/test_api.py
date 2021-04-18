@@ -262,3 +262,70 @@ class TestStates:
             "latitude": 50.94217152830834,
             "longitude": 6.897017373118707,
         }
+
+    def test_schools_ordered_by_distance(self, client, db):
+        # Arrange
+        for school in [
+            SchoolFactory.create(location=None, id="BB-0"),
+            SchoolFactory.create(location='SRID=4326;POINT(52.00  13.00)', id="BB-1"),
+            SchoolFactory.create(location='SRID=4326;POINT(50.00  11.00)', id="BB-2"),
+            SchoolFactory.create(location='SRID=4326;POINT(50.00  10.00)', id="BB-3")
+        ]:
+            db.add(school)
+        db.commit()
+
+        # Act?by_lat=52.00&by_lon=9.99&limit=1"t
+        response = client.get("/schools?by_lat=52.00&by_lon=9.99&limit=1")
+
+        # Assert
+        assert response.status_code == 200
+        schools = response.json()
+        assert len(schools) == 1
+        assert schools[0]['id'] == "BB-3"
+
+    around_queries = [
+        ("?by_lat=52", 400),
+        ("?by_lon=10", 400),
+        ("?by_lon=10&by_lat=52", 200),
+    ]
+    @pytest.mark.parametrize("query_params,status_code", around_queries)
+    def test_around_param_validation(self, client, db, query_params, status_code):
+        # Act
+        response = client.get(f"/schools{query_params}")
+
+        # Assert
+        assert response.status_code == status_code
+
+
+    bounding_box_queries = [
+        ("?bb_top=52", 400),
+        ("?bb_top=41&bb_bottom=10", 400),
+        ("?bb_top=41&bb_bottom=10&bb_left=10", 400),
+        ("?bb_top=41&bb_bottom=10&bb_left=10&bb_right=11", 200),
+    ]
+    @pytest.mark.parametrize("query_params,status_code", bounding_box_queries)
+    def test_bounding_box_param_validation(self, client, db, query_params, status_code):
+        # Act
+        response = client.get(f"/schools{query_params}")
+
+        # Assert
+        assert response.status_code == status_code
+
+    def test_schools_by_bounding_box(self, client, db):
+        # Arrange
+        for school in [
+            SchoolFactory.create(location=None),
+            SchoolFactory.create(location='SRID=4326;POINT(52.00  13.00)'),
+            SchoolFactory.create(location='SRID=4326;POINT(51.00  11.00)'),
+            SchoolFactory.create(location='SRID=4326;POINT(50.00  11.00)'),
+            SchoolFactory.create(location='SRID=4326;POINT(50.00  9.00)')
+        ]:
+            db.add(school)
+        db.commit()
+
+        # Act
+        response = client.get("/schools?bb_top=12.00&bb_bottom=10&bb_left=49&bb_right=51")
+
+        # Assert
+        assert response.status_code == 200
+        assert len(response.json()) == 2

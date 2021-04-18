@@ -1,5 +1,6 @@
 from typing import List
 
+from sqlalchemy import func, asc
 from sqlalchemy.orm import Query
 
 from app import models
@@ -37,8 +38,30 @@ class BasicFilter(Filter):
         return query.filter(column_to_filter.in_(self.values))
 
 
+class BoundingBoxFilter(Filter):
+    supported_keys = ['bounding_box']
+
+    def apply(self, query):
+        return query.filter(
+            models.School.location.intersects(
+                func.ST_MakeEnvelope(
+                    self.values['left'], self.values['top'],
+                    self.values['right'], self.values['bottom']
+                )
+            )
+        )
+
+
+class LatLonSorter(Filter):
+    supported_keys = ['around']
+
+    def apply(self, query):
+        point = f"SRID=4326;POINT({self.values['lat']} {self.values['lon']})"
+        return query.order_by(asc(func.ST_Distance(models.School.location, point)))
+
+
 class SchoolFilter:
-    filter_classes = [StateFilter, BasicFilter]
+    filter_classes = [StateFilter, BasicFilter, LatLonSorter, BoundingBoxFilter]
 
     def __init__(self, params):
         self.used_filters = []
