@@ -289,9 +289,43 @@ class TestStates:
         ("?by_lon=10&by_lat=52", 200),
     ]
     @pytest.mark.parametrize("query_params,status_code", around_queries)
-    def test_timedistance_v0(self, client, db, query_params, status_code):
+    def test_around_param_validation(self, client, db, query_params, status_code):
         # Act
         response = client.get(f"/schools{query_params}")
 
         # Assert
         assert response.status_code == status_code
+
+
+    bounding_box_queries = [
+        ("?bb_top=52", 400),
+        ("?bb_top=41&bb_bottom=10", 400),
+        ("?bb_top=41&bb_bottom=10&bb_left=10", 400),
+        ("?bb_top=41&bb_bottom=10&bb_left=10&bb_right=11", 200),
+    ]
+    @pytest.mark.parametrize("query_params,status_code", bounding_box_queries)
+    def test_bounding_box_param_validation(self, client, db, query_params, status_code):
+        # Act
+        response = client.get(f"/schools{query_params}")
+
+        # Assert
+        assert response.status_code == status_code
+
+    def test_schools_by_bounding_box(self, client, db):
+        # Arrange
+        for school in [
+            SchoolFactory.create(location=None),
+            SchoolFactory.create(location='SRID=4326;POINT(52.00  13.00)'),
+            SchoolFactory.create(location='SRID=4326;POINT(51.00  11.00)'),
+            SchoolFactory.create(location='SRID=4326;POINT(50.00  11.00)'),
+            SchoolFactory.create(location='SRID=4326;POINT(50.00  9.00)')
+        ]:
+            db.add(school)
+        db.commit()
+
+        # Act
+        response = client.get("/schools?bb_top=12.00&bb_bottom=10&bb_left=49&bb_right=51")
+
+        # Assert
+        assert response.status_code == 200
+        assert len(response.json()) == 2

@@ -45,6 +45,17 @@ def read_schools(skip: int = 0,
                                                              "Must be used in combination with `by_lat`"
                                                              "Value must be in CRS EPSG:4326"
                                                  ),
+                 bb_top: Optional[float] = Query(None,
+                                                 description="Allows filtering results by bounding box."
+                                                             "Must be used in combination with `bb_bottom`, `bb_left` and `bb_right`"
+                                                             "Value must be in CRS EPSG:4326"
+                                                 ),
+                 bb_bottom: Optional[float] = Query(None,
+                                                    description="Allows filtering results by bounding box. See `bb_top` for details."),
+                 bb_left: Optional[float] = Query(None,
+                                                  description="Allows filtering results by bounding box. See `bb_top` for details."),
+                 bb_right: Optional[float] = Query(None,
+                                                   description="Allows filtering results by bounding box. See `bb_top` for details."),
                  include_raw: bool = False,
                  db: Session = Depends(get_db)):
     filter_params = {
@@ -56,6 +67,17 @@ def read_schools(skip: int = 0,
         if not (by_lon and by_lat):
             raise HTTPException(status_code=400, detail="To order by point, you need to provide by_lon and by_lat.")
         filter_params["around"] = {"lat": by_lat, "lon": by_lon}
+    bounding_box = {
+        "top": bb_top,
+        "bottom": bb_bottom,
+        "left": bb_left,
+        "right": bb_right
+    }
+    bounding_box_count = len([value for value in bounding_box.values() if value is not None])
+    if bounding_box_count != 0:
+        if bounding_box_count != 4:
+            raise HTTPException(status_code=400, detail="To filter by bounding box, you need to provide all `bb_` values.")
+        filter_params["bounding_box"] = bounding_box
     schools = crud.get_schools(db, skip=skip, limit=limit, filter_params=filter_params)
     if include_raw:
         return schools

@@ -38,6 +38,20 @@ class BasicFilter(Filter):
         return query.filter(column_to_filter.in_(self.values))
 
 
+class BoundingBoxFilter(Filter):
+    supported_keys = ['bounding_box']
+
+    def apply(self, query):
+        return query.filter(
+            models.School.location.intersects(
+                func.ST_MakeEnvelope(
+                    self.values['left'], self.values['top'],
+                    self.values['right'], self.values['bottom']
+                )
+            )
+        )
+
+
 class LatLonSorter(Filter):
     supported_keys = ['around']
 
@@ -47,7 +61,7 @@ class LatLonSorter(Filter):
 
 
 class SchoolFilter:
-    filter_classes = [StateFilter, BasicFilter, LatLonSorter]
+    filter_classes = [StateFilter, BasicFilter, LatLonSorter, BoundingBoxFilter]
 
     def __init__(self, params):
         self.used_filters = []
