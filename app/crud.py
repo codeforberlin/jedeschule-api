@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from sqlalchemy.orm import Session
 
@@ -7,12 +7,15 @@ from .filters import SchoolFilter
 from .schemas import School
 
 
-def get_school(db: Session, school_id: str) -> School:
+def get_school(db: Session, school_id: str) -> Optional[School]:
     school = db \
         .query(models.School) \
         .filter(models.School.id == school_id) \
         .first()
-    return School.from_db(school)
+    if school:
+        return School.from_db(school)
+    return None
+
 
 
 def get_schools(db: Session, skip: int = 0, limit: int = 100, filter_params=None) -> List[School]:
