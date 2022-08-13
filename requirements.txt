@@ -1,4 +1,4 @@
-fastapi==0.63.0
+fastapi==0.65.2
 GeoAlchemy2==0.8.4
 psycopg2==2.8.4
 Shapely==1.7.1
