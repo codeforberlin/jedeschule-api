@@ -329,3 +329,14 @@ class TestStates:
         # Assert
         assert response.status_code == 200
         assert len(response.json()) == 2
+
+    def test_get_single_no_result(self, client, db):
+        # Arrange
+        self.__setup_schools(db)
+
+        # Act
+        response = client.get("/schools/NI-12345")
+
+        # Assert
+        assert response.status_code == 404
+
