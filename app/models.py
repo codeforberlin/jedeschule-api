@@ -1,5 +1,5 @@
 from geoalchemy2 import Geometry
-from sqlalchemy import Column, String, JSON, func
+from sqlalchemy import Column, String, JSON, func, DateTime
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from .database import Base
@@ -22,6 +22,7 @@ class School(Base):
     phone = Column(String)
     director = Column(String)
     raw = Column(JSON)
+    update_timestamp = Column(DateTime)
     location = Column(Geometry('POINT'))
 
     @hybrid_property
