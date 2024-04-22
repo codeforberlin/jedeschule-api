@@ -51,6 +51,6 @@ jobs:
           DATABASE_URL: postgresql://postgres:postgres@0.0.0.0:5432/jedeschule_test
           DATABASE_URL_TEST: postgresql://postgres:postgres@0.0.0.0:5432/jedeschule_test
       - name: "Upload coverage to Codecov"
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v4
         with:
           fail_ci_if_error: true
