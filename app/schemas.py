@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import datetime
 from enum import Enum
 from typing import Optional, List
 
@@ -46,6 +47,7 @@ class School(BaseModel):
     website: Optional[str]
     zip: Optional[str]
     raw: Optional[dict]
+    update_timestamp: Optional[datetime]
 
     class Config:
         orm_mode = True
