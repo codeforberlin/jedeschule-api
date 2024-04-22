@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from typing import Iterator, Generator
 
 import pytest
@@ -329,6 +330,22 @@ class TestStates:
         # Assert
         assert response.status_code == 200
         assert len(response.json()) == 2
+
+    def test_schools_by_update_date(self, client, db):
+        # Arrange
+        for school in [
+            SchoolFactory.create(update_timestamp=datetime(2024, 1, 1)),
+            SchoolFactory.create(update_timestamp=datetime(2022, 1, 1)),
+        ]:
+            db.add(school)
+        db.commit()
+
+        # Act
+        response = client.get("/schools?update_timestamp=2023-01-01")
+
+        # Assert
+        assert response.status_code == 200
+        assert len(response.json()) == 1
 
     def test_get_single_no_result(self, client, db):
         # Arrange
