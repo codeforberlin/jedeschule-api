@@ -1,3 +1,4 @@
+from datetime import datetime, date
 from typing import List, Optional
 
 from fastapi import Depends, FastAPI, HTTPException, Query
@@ -56,12 +57,15 @@ def read_schools(skip: int = 0,
                                                   description="Allows filtering results by bounding box. See `bb_top` for details."),
                  bb_right: Optional[float] = Query(None,
                                                    description="Allows filtering results by bounding box. See `bb_top` for details."),
+                 update_timestamp: Optional[date] = Query(None,
+                                                   description="Allows filtering to only results scraped after the given date."),
                  include_raw: bool = False,
                  db: Session = Depends(get_db)):
     filter_params = {
         "state": state,
         "school_type": school_type,
         "legal_status": legal_status,
+        "update_timestamp": update_timestamp,
     }
     if by_lat or by_lon:
         if not (by_lon and by_lat):
