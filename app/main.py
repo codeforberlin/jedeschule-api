@@ -89,7 +89,7 @@ def read_schools(skip: int = 0,
     schools = crud.get_schools(db, skip=skip, limit=limit, filter_params=filter_params)
     if include_raw:
         return schools
-    return [school.dict(exclude={'raw'}) for school in schools]
+    return [school.model_dump(exclude={'raw'}) for school in schools]
 
 
 @app.get("/schools/{school_id}", response_model=schemas.School, response_model_exclude_none=True)
@@ -99,7 +99,7 @@ def read_school(school_id: str, include_raw: bool = False, db: Session = Depends
         raise HTTPException(status_code=404, detail="School not found")
     if include_raw:
         return db_school
-    return db_school.dict(exclude={'raw'})
+    return db_school.model_dump(exclude={'raw'})
 
 
 @app.get("/stats", response_model=List[schemas.Statistic])

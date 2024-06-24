@@ -5,7 +5,7 @@ from enum import Enum
 from typing import Optional, List
 
 from geoalchemy2.shape import to_shape
-from pydantic import BaseModel
+from pydantic import ConfigDict, BaseModel
 
 from app import models
 
@@ -33,31 +33,29 @@ class School(BaseModel):
     id: str
     name: str
     address: str
-    address2: Optional[str]
-    city: Optional[str]
-    director: Optional[str]
-    email: Optional[str]
-    fax: Optional[str]
-    latitude: Optional[float]
-    legal_status: Optional[str]
-    longitude: Optional[float]
-    phone: Optional[str]
-    provider: Optional[str]
-    school_type: Optional[str]
-    website: Optional[str]
-    zip: Optional[str]
-    raw: Optional[dict]
-    update_timestamp: Optional[datetime]
-
-    class Config:
-        orm_mode = True
+    address2: Optional[str] = None
+    city: Optional[str] = None
+    director: Optional[str] = None
+    email: Optional[str] = None
+    fax: Optional[str] = None
+    latitude: Optional[float] = None
+    legal_status: Optional[str] = None
+    longitude: Optional[float] = None
+    phone: Optional[str] = None
+    provider: Optional[str] = None
+    school_type: Optional[str] = None
+    website: Optional[str] = None
+    zip: Optional[str] = None
+    raw: Optional[dict] = None
+    update_timestamp: Optional[datetime] = None
+    model_config = ConfigDict(from_attributes=True)
 
     @staticmethod
     def from_db(db_entry: models.School) -> School:
         if not db_entry.location:
-            return School.from_orm(db_entry)
+            return School.model_validate(db_entry)
         shape = to_shape(db_entry.location)
-        school = School.from_orm(db_entry)
+        school = School.model_validate(db_entry)
         school.latitude = shape.x
         school.longitude = shape.y
         return school
@@ -66,17 +64,15 @@ class School(BaseModel):
 class Statistic(BaseModel):
     state: State
     count: int
-
-    class Config:
-        schema_extra = {
-            "example": [{
-                "name": "BE",
-                "count": 10,
-            },
-                {"name": "ND",
-                 "count": 12}
-            ]
-        }
+    model_config = ConfigDict(json_schema_extra={
+        "example": [{
+            "name": "BE",
+            "count": 10,
+        },
+            {"name": "ND",
+             "count": 12}
+        ]
+    })
 
 
 class Params(BaseModel):
