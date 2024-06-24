@@ -37,6 +37,13 @@ class BasicFilter(Filter):
         column_to_filter = getattr(models.School, self.key)
         return query.filter(column_to_filter.in_(self.values))
 
+class TextMatchFilter(Filter):
+    supported_keys = ['name']
+
+    def apply(self, query):
+        column_to_filter = getattr(models.School, self.key)
+        return query.filter(column_to_filter.icontains(self.values))
+
 class UpdateTimestampFilter(Filter):
     supported_keys = ['update_timestamp']
 
@@ -67,7 +74,13 @@ class LatLonSorter(Filter):
 
 
 class SchoolFilter:
-    filter_classes = [StateFilter, BasicFilter, LatLonSorter, BoundingBoxFilter, UpdateTimestampFilter]
+    filter_classes = [StateFilter,
+                      BasicFilter,
+                      LatLonSorter,
+                      BoundingBoxFilter,
+                      UpdateTimestampFilter,
+                      TextMatchFilter
+                      ]
 
     def __init__(self, params):
         self.used_filters = []

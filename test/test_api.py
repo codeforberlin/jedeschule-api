@@ -347,6 +347,29 @@ class TestStates:
         assert response.status_code == 200
         assert len(response.json()) == 1
 
+    def test_schools_by_name(self, client, db):
+        # Arrange
+        for school in [
+            SchoolFactory.create(name='Schule am kleinen Deich'),
+            SchoolFactory.create(name='Schule an der Dorfstraßse'),
+        ]:
+            db.add(school)
+        db.commit()
+
+        # Act
+        unfiltered_response = client.get("/schools")
+        deich_response = client.get("/schools?name=deich")
+        no_match_response = client.get("/schools?name=nicht%20da")
+
+        # Assert
+        assert unfiltered_response.status_code == 200
+        assert deich_response.status_code == 200
+        assert no_match_response.status_code == 200
+
+        assert len(unfiltered_response.json()) == 2
+        assert len(deich_response.json()) == 1
+        assert len(no_match_response.json()) == 0
+
     def test_get_single_no_result(self, client, db):
         # Arrange
         self.__setup_schools(db)

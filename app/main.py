@@ -36,6 +36,9 @@ def read_schools(skip: int = 0,
                  state: Optional[List[State]] = Query(None),
                  school_type: Optional[List[str]] = Query(None),
                  legal_status: Optional[List[str]] = Query(None),
+                 name: Optional[str] = Query(None,
+                                             description="Allows searching for names of schools."
+                                                         "Searches for case-insensitive substrings."),
                  by_lat: Optional[float] = Query(None,
                                                  description="Allows ordering result by distance from a geographical point."
                                                              "Must be used in combination with `by_lon`"
@@ -66,6 +69,7 @@ def read_schools(skip: int = 0,
         "school_type": school_type,
         "legal_status": legal_status,
         "update_timestamp": update_timestamp,
+        "name": name,
     }
     if by_lat or by_lon:
         if not (by_lon and by_lat):
