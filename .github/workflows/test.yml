@@ -30,14 +30,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
       - name: Setup python
         uses: actions/setup-python@v1
         with:
           python-version: ${{ matrix.python-version }}
           architecture: x64
-      - run: pip install wheel
-      - run: pip install -r requirements-dev.txt
-      - run: pip install -r requirements.txt
+      - run: apt install --yes libgeos-dev
+      - run: uv pip install wheel
+      - run: uv pip install -r requirements-dev.txt
+      - run: uv pip install -r requirements.txt
       - run: |
           createdb jedeschule_test
           psql jedeschule_test -c "CREATE EXTENSION postgis";
