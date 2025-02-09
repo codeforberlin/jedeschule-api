@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, date
 from enum import Enum
 from typing import Optional, List
 
@@ -64,7 +64,7 @@ class School(BaseModel):
 class Statistic(BaseModel):
     state: State
     count: int
-    last_updated: str
+    last_updated: date
     model_config = ConfigDict(json_schema_extra={
         "example": [{
             "name": "BE",
