@@ -1,4 +1,4 @@
-coverage==5.4
+coverage==7.6.11
 factory-boy==3.2.0
-pytest==6.2.2
+pytest==8.3.4
 httpx==0.27.0
