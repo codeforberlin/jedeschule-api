@@ -37,7 +37,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           architecture: x64
-      - run: apt install --yes libgeos-dev
+      - run: sudo apt-get install --yes libgeos-dev
       - run: uv pip install wheel
       - run: uv pip install -r requirements-dev.txt
       - run: uv pip install -r requirements.txt
