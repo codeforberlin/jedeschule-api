@@ -6,6 +6,8 @@ on:
 
 jobs:
   build:
+    env:
+      UV_SYSTEM_PYTHON: 1 # Allow uv to run without virtualenv
     runs-on: ubuntu-latest
     strategy:
       matrix:
