@@ -45,8 +45,8 @@ def client() -> Generator:
 
 class TestStats:
     def test_stats(self, client, db):
-        ni_schools = [School(id=f"NI-{i}") for i in range(10)]
-        be_schools = [School(id="BE-1")]
+        ni_schools = [School(id=f"NI-{i}", update_timestamp=datetime(2025, 1, 1)) for i in range(10)]
+        be_schools = [School(id="BE-1", update_timestamp=datetime(2024,12,24))]
         for school in ni_schools + be_schools:
             db.add(school)
         db.commit()
@@ -55,8 +55,8 @@ class TestStats:
 
         assert response.status_code == 200
         assert response.json() == [
-            {"state": "BE", "count": 1},
-            {"state": "NI", "count": 10},
+            {"state": "BE", "count": 1, "last_updated": "2024-12-24"},
+            {"state": "NI", "count": 10, "last_updated": "2025-01-01"},
         ]
 
 
