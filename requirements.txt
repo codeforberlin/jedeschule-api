@@ -1,6 +1,6 @@
 fastapi[standard]==0.115.8
 GeoAlchemy2==0.15.1
-psycopg2==2.9.9
-pydantic==2.7.4
+psycopg2==2.9.10
+pydantic==2.10.6
 Shapely==1.7.1
 SQLAlchemy==2.0.31
