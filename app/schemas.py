@@ -64,13 +64,17 @@ class School(BaseModel):
 class Statistic(BaseModel):
     state: State
     count: int
+    last_updated: str
     model_config = ConfigDict(json_schema_extra={
         "example": [{
             "name": "BE",
             "count": 10,
+            "last_updated": "2025-01-01"
         },
             {"name": "ND",
-             "count": 12}
+             "count": 12,
+             "last_updated": "2025-01-01"
+             }
         ]
     })
 
