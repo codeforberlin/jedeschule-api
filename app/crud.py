@@ -27,7 +27,10 @@ def get_schools(db: Session, skip: int = 0, limit: int = 100, filter_params=None
 
 
 def get_stats(db: Session):
-    response = db.execute(text("""select substring(id, 1, 2) as state, count(*) as count
+    response = db.execute(text("""select
+        substring(id, 1, 2) as state,
+        count(*) as count,
+        max(update_timestamp)::date as last_updated
 from schools
 group by state
 order by state;"""))
