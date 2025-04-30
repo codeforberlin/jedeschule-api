@@ -56,8 +56,8 @@ class School(BaseModel):
             return School.model_validate(db_entry)
         shape = to_shape(db_entry.location)
         school = School.model_validate(db_entry)
-        school.latitude = shape.x
-        school.longitude = shape.y
+        school.latitude = shape.y
+        school.longitude = shape.x
         return school
 
 
