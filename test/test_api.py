@@ -244,7 +244,7 @@ class TestStates:
         # Arrange
         school = SchoolFactory(
             id=f"NW-100010",
-            location="SRID=4326;POINT(50.94217152830834 6.897017373118707)",
+            location="SRID=4326;POINT(6.897017373118707 50.94217152830834)",
             name="Gymnasium Claudia Agrippina Privat schule als priv.Ersatzsch. d. Sek.I u.II im Aufbau d. CAPS Privatschu gGmbH",
             address="Stolberger Str. 112",
         )
@@ -268,15 +268,15 @@ class TestStates:
         # Arrange
         for school in [
             SchoolFactory.create(location=None, id="BB-0"),
-            SchoolFactory.create(location='SRID=4326;POINT(52.00  13.00)', id="BB-1"),
-            SchoolFactory.create(location='SRID=4326;POINT(50.00  11.00)', id="BB-2"),
-            SchoolFactory.create(location='SRID=4326;POINT(50.00  10.00)', id="BB-3")
+            SchoolFactory.create(location='SRID=4326;POINT(13.00 52.00)', id="BB-1"),
+            SchoolFactory.create(location='SRID=4326;POINT(11.00 50.00)', id="BB-2"),
+            SchoolFactory.create(location='SRID=4326;POINT(10.00 50.00)', id="BB-3")
         ]:
             db.add(school)
         db.commit()
 
-        # Act?by_lat=52.00&by_lon=9.99&limit=1"t
-        response = client.get("/schools?by_lat=52.00&by_lon=9.99&limit=1")
+        # Act
+        response = client.get("/schools?by_lat=9.99&by_lon=52.00&limit=1")
 
         # Assert
         assert response.status_code == 200
