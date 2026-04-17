@@ -10,6 +10,8 @@ from sqlalchemy.orm import sessionmaker, Session
 from app.main import app, get_db
 from app.database import Base
 from app.models import School
+from app.schemas import State
+from app.state_key import parse_state_key_column
 from test.factory import SchoolFactory, get_full_school
 
 engine = create_engine(os.environ.get("DATABASE_URL_TEST"))
@@ -41,6 +43,13 @@ def db() -> Generator:
 def client() -> Generator:
     with TestClient(app) as c:
         yield c
+
+
+def test_parse_state_key_column():
+    assert parse_state_key_column("NW") == State.NW
+    assert parse_state_key_column("XX") is None
+    assert parse_state_key_column(None) is None
+    assert parse_state_key_column("") is None
 
 
 class TestStats:
@@ -176,6 +185,7 @@ class TestStates:
         assert response.json() == [
             {
                 "id": "NW-112586",
+                "state_key": "NW",
                 "name": "Städt. Gem. Grundschule - Primarstufe -",
                 "address": "Pfälzer Str. 30-34",
                 "city": "Köln",
@@ -201,6 +211,7 @@ class TestStates:
         assert response.json() == [
             {
                 "id": "NW-112586",
+                "state_key": "NW",
                 "name": "Städt. Gem. Grundschule - Primarstufe -",
                 "address": "Pfälzer Str. 30-34",
                 "city": "Köln",
@@ -244,6 +255,7 @@ class TestStates:
         # Arrange
         school = SchoolFactory(
             id=f"NW-100010",
+            state_key="NW",
             location="SRID=4326;POINT(6.897017373118707 50.94217152830834)",
             name="Gymnasium Claudia Agrippina Privat schule als priv.Ersatzsch. d. Sek.I u.II im Aufbau d. CAPS Privatschu gGmbH",
             address="Stolberger Str. 112",
@@ -258,6 +270,7 @@ class TestStates:
         # Assert
         assert response.json() == {
             "id": "NW-100010",
+            "state_key": "NW",
             "name": "Gymnasium Claudia Agrippina Privat schule als priv.Ersatzsch. d. Sek.I u.II im Aufbau d. CAPS Privatschu gGmbH",
             "address": "Stolberger Str. 112",
             "latitude": 50.94217152830834,
@@ -379,4 +392,24 @@ class TestStates:
 
         # Assert
         assert response.status_code == 404
+
+    def test_school_malformed_id_omits_state_key(self, client, db):
+        db.add(SchoolFactory(id="XX-12345", name="Unknown prefix", state_key=None))
+        db.commit()
+
+        response = client.get("/schools/XX-12345")
+
+        assert response.status_code == 200
+        body = response.json()
+        assert body["id"] == "XX-12345"
+        assert "state_key" not in body
+
+    def test_school_id_without_hyphen_omits_state_key(self, client, db):
+        db.add(SchoolFactory(id="nohyphen", name="No dash", state_key=None))
+        db.commit()
+
+        response = client.get("/schools/nohyphen")
+
+        assert response.status_code == 200
+        assert "state_key" not in response.json()
 

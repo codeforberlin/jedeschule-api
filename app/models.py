@@ -8,6 +8,8 @@ from .database import Base
 class School(Base):
     __tablename__ = 'schools'
     id = Column(String, primary_key=True)
+    # ISO 3166-2:DE code without DE- prefix; set by jedeschule-scraper (Land spider `state_key`).
+    state_key = Column(String, nullable=True)
     name = Column(String)
     address = Column(String)
     address2 = Column(String)

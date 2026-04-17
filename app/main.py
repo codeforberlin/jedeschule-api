@@ -126,6 +126,8 @@ def custom_openapi():
                     "The schools are scraped as part of the [jedeschule.de](https://jedeschule.de) project."
                     "You can find the source code for the [API](https://github.com/codeforberlin/jedeschule-api) and "
                     "the [scrapers](https://github.com/datenschule/jedeschule-scraper) on Github. \n\n"
+                    "Each school may include `state_key` when the scraper has stored it (same "
+                    "Bundesland codes as the `state` filter).\n\n"
                     "For more information about the available endpoints, check the documentation below.",
         routes=app.routes,
     )

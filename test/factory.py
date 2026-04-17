@@ -16,6 +16,8 @@ class SchoolFactory(factory.Factory):
         return states[n % len(states)]
 
     id = factory.Sequence(lambda n: "{}-{}".format(SchoolFactory._get_state(n), n))
+    # Same Land code the jedeschule-scraper sets on each spider (matches id prefix).
+    state_key = factory.Sequence(lambda n: SchoolFactory._get_state(n))
     name = factory.Sequence(lambda n: 'School %d' % n)
     address = factory.Faker('address')
 
@@ -23,6 +25,7 @@ class SchoolFactory(factory.Factory):
 def get_full_school():
     return School(
         id="NW-112586",
+        state_key="NW",
         name="Städt. Gem. Grundschule - Primarstufe -",
         address="Pfälzer Str. 30-34",
         city="Köln",
