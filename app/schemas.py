@@ -32,7 +32,7 @@ class State(Enum):
 class School(BaseModel):
     id: str
     name: str
-    address: str
+    address: Optional[str] = None
     address2: Optional[str] = None
     city: Optional[str] = None
     director: Optional[str] = None
